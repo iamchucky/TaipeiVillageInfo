@@ -1,6 +1,7 @@
 {
   "name": "taipei-village-info",
   "version": "0.1.0",
-  "dependencies": {}
+  "dependencies": {
+    "bootstrap-sass": "~3.3.5"
+  }
 }
-
