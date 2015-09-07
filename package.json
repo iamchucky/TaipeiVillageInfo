@@ -42,6 +42,7 @@
     "flux": "^2.1.1",
     "object-assign": "^4.0.1",
     "react": "^0.13.3",
-    "react-bootstrap": "^0.25.1"
+    "react-bootstrap": "^0.25.1",
+    "togeojson": "^0.13.0"
   }
 }

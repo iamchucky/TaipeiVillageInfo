@@ -1,40 +1,47 @@
 import React, {PropTypes} from 'react';
-import Map from './Map.jsx';
 import Button from 'react-bootstrap/lib/Button';
-import Jumbotron from 'react-bootstrap/lib/Jumbotron';
-import TaskList from './TaskList.jsx';
+import Map from './Map.jsx';
+import StatList from './StatList.jsx';
+import NoteList from './NoteList.jsx';
 
 export default React.createClass({
   propTypes: {
-    tasks: PropTypes.array.isRequired,
+    stats: PropTypes.array.isRequired,
+    notes: PropTypes.array.isRequired,
     onAddTask: PropTypes.func.isRequired,
     onClear: PropTypes.func.isRequired
   },
 
   getDefaultProps() {
     return {
-      tasks: []
+      stats: {
+        title: '士林區德華里',
+        items: [{
+          name: '測試1',
+          val: 2
+        }, {
+          name: '測試2',
+          val: 3
+        }]
+      },
+      notes: [{
+        agency: '民政局',
+        val: '這個里的里民...'
+      }, {
+        agency: '社會局',
+        val: '弱勢族群比較多'
+      }]
     }
   },
 
   render() {
-    let {onAddTask, onClear, tasks} = this.props;
+    let {onAddTask, onClear, stats, notes} = this.props;
     return (
       <div className="container-fluid full-height">
         <div className="row full-height">
-          <div className="col-sm-6">
-            <Jumbotron>
-              <h1>Learning Flux</h1>
-              <p>
-                Below is a list of tasks you can implement to better grasp the patterns behind Flux.<br />
-                Most features are left unimplemented with clues to guide you on the learning process.
-              </p>
-            </Jumbotron>
-
-            <TaskList tasks={tasks} />
-
-            <Button onClick={onAddTask} bsStyle="primary">Add New</Button>
-            <Button onClick={onClear} bsStyle="danger">Clear List</Button>
+          <div className="col-sm-6 left-pane full-height">
+            <StatList stats={stats} />
+            <NoteList notes={notes} />
           </div>
           <div className="col-sm-6 full-height">
             <Map />

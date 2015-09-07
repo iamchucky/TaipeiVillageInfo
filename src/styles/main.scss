@@ -11,3 +11,21 @@ html, body, .full-height, .map {
   margin-left: -15px;
   margin-right: -15px;
 }
+
+.left-top {
+  color: #fff;
+  background-color: $brand-primary;
+}
+
+.left-pane {
+  background-color: #e6e6e6;
+}
+
+.left-pane > ul {
+  padding: 15px;
+}
+
+.map-region-name {
+  top: 0;
+  position: absolute;
+}
