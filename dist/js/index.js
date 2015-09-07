@@ -22690,6 +22690,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _MapJsx = require('./Map.jsx');
+
+var _MapJsx2 = _interopRequireDefault(_MapJsx);
+
 var _reactBootstrapLibButton = require('react-bootstrap/lib/Button');
 
 var _reactBootstrapLibButton2 = _interopRequireDefault(_reactBootstrapLibButton);
@@ -22725,33 +22729,46 @@ exports['default'] = _react2['default'].createClass({
 
     return _react2['default'].createElement(
       'div',
-      { className: 'container' },
+      { className: 'container-fluid full-height' },
       _react2['default'].createElement(
-        _reactBootstrapLibJumbotron2['default'],
-        null,
+        'div',
+        { className: 'row full-height' },
         _react2['default'].createElement(
-          'h1',
-          null,
-          'Learning Flux'
+          'div',
+          { className: 'col-sm-6' },
+          _react2['default'].createElement(
+            _reactBootstrapLibJumbotron2['default'],
+            null,
+            _react2['default'].createElement(
+              'h1',
+              null,
+              'Learning Flux'
+            ),
+            _react2['default'].createElement(
+              'p',
+              null,
+              'Below is a list of tasks you can implement to better grasp the patterns behind Flux.',
+              _react2['default'].createElement('br', null),
+              'Most features are left unimplemented with clues to guide you on the learning process.'
+            )
+          ),
+          _react2['default'].createElement(_TaskListJsx2['default'], { tasks: tasks }),
+          _react2['default'].createElement(
+            _reactBootstrapLibButton2['default'],
+            { onClick: onAddTask, bsStyle: 'primary' },
+            'Add New'
+          ),
+          _react2['default'].createElement(
+            _reactBootstrapLibButton2['default'],
+            { onClick: onClear, bsStyle: 'danger' },
+            'Clear List'
+          )
         ),
         _react2['default'].createElement(
-          'p',
-          null,
-          'Below is a list of tasks you can implement to better grasp the patterns behind Flux.',
-          _react2['default'].createElement('br', null),
-          'Most features are left unimplemented with clues to guide you on the learning process.'
+          'div',
+          { className: 'col-sm-6 full-height' },
+          _react2['default'].createElement(_MapJsx2['default'], null)
         )
-      ),
-      _react2['default'].createElement(_TaskListJsx2['default'], { tasks: tasks }),
-      _react2['default'].createElement(
-        _reactBootstrapLibButton2['default'],
-        { onClick: onAddTask, bsStyle: 'primary' },
-        'Add New'
-      ),
-      _react2['default'].createElement(
-        _reactBootstrapLibButton2['default'],
-        { onClick: onClear, bsStyle: 'danger' },
-        'Clear List'
       )
     );
   }
@@ -22759,7 +22776,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./TaskList.jsx":222,"react":215,"react-bootstrap/lib/Button":9,"react-bootstrap/lib/Jumbotron":17}],220:[function(require,module,exports){
+},{"./Map.jsx":221,"./TaskList.jsx":223,"react":215,"react-bootstrap/lib/Button":9,"react-bootstrap/lib/Jumbotron":17}],220:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -22826,7 +22843,47 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/TodoActionCreators":218,"../stores/TodoStore":225,"./App.jsx":219,"react":215}],221:[function(require,module,exports){
+},{"../actions/TodoActionCreators":218,"../stores/TodoStore":226,"./App.jsx":219,"react":215}],221:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+exports['default'] = _react2['default'].createClass({
+  displayName: 'Map',
+
+  getInitialState: function getInitialState() {
+    return {};
+  },
+
+  componentDidMount: function componentDidMount() {
+    var mapElement = this.refs.map.getDOMNode();
+    var map;
+
+    google.maps.event.addDomListener(window, 'load', function () {
+      map = new google.maps.Map(mapElement, {
+        zoom: 12,
+        center: { lat: 25.08, lng: 121.55 },
+        disableDefaultUI: true
+      });
+    });
+  },
+
+  render: function render() {
+    return _react2['default'].createElement('div', { className: 'map col-no-margin', ref: 'map' });
+  }
+});
+module.exports = exports['default'];
+
+
+},{"react":215}],222:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -22883,7 +22940,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/TodoActionCreators":218,"react":215,"react-bootstrap/lib/Input":15,"react-bootstrap/lib/ListGroupItem":19}],222:[function(require,module,exports){
+},{"../actions/TodoActionCreators":218,"react":215,"react-bootstrap/lib/Input":15,"react-bootstrap/lib/ListGroupItem":19}],223:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -22949,7 +23006,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./Task.jsx":221,"react":215,"react-bootstrap/lib/Alert":7,"react-bootstrap/lib/ListGroup":18}],223:[function(require,module,exports){
+},{"./Task.jsx":222,"react":215,"react-bootstrap/lib/Alert":7,"react-bootstrap/lib/ListGroup":18}],224:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -22965,7 +23022,7 @@ var _componentsAppContainerJsx2 = _interopRequireDefault(_componentsAppContainer
 _react2['default'].render(_react2['default'].createElement(_componentsAppContainerJsx2['default'], null), document.getElementById('main'));
 
 
-},{"./components/AppContainer.jsx":220,"react":215}],224:[function(require,module,exports){
+},{"./components/AppContainer.jsx":220,"react":215}],225:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -23002,7 +23059,7 @@ exports['default'] = (0, _objectAssign2['default'])({}, _events.EventEmitter.pro
 module.exports = exports['default'];
 
 
-},{"../Constants":216,"events":1,"object-assign":6}],225:[function(require,module,exports){
+},{"../Constants":216,"events":1,"object-assign":6}],226:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -23071,4 +23128,4 @@ exports['default'] = TodoStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":216,"../Dispatcher":217,"./BaseStore":224,"object-assign":6}]},{},[223]);
+},{"../Constants":216,"../Dispatcher":217,"./BaseStore":225,"object-assign":6}]},{},[224]);
