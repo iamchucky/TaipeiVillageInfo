@@ -3,7 +3,6 @@ import Button from 'react-bootstrap/lib/Button';
 import Map from './Map.jsx';
 import StatList from './StatList.jsx';
 import NoteList from './NoteList.jsx';
-import Tabletop from 'tabletop';
 
 export default React.createClass({
   getDefaultProps() {
