@@ -12,20 +12,52 @@ html, body, .full-height, .map {
   margin-right: -15px;
 }
 
+.left-pane {
+  background-color: #e6e6e6;
+  overflow-y: auto;
+}
+
+$general-padding: 15px;
+$left-top-height: 60px;
+
 .left-top {
   color: #fff;
   background-color: $brand-primary;
-}
 
-.left-pane {
-  background-color: #e6e6e6;
-}
+  margin-left: -15px;
+  margin-right: -15px;
+  margin-bottom: $general-padding;
+  padding: 0 15px;
+  height: $left-top-height;
 
-.left-pane > ul {
-  padding: 15px;
+  font-size: 1.5em;
+  line-height: $left-top-height;
 }
 
 .map-region-name {
-  top: 0;
+  top: $general-padding;
+  left: $general-padding;
   position: absolute;
+}
+
+.left-bottom {
+  height: 100%;
+  padding: $general-padding;
+  padding-top: $general-padding + $left-top-height;
+  margin-top: -$left-top-height;
+  overflow-y: auto;
+
+}
+
+.note-panel {
+  width: 300px;
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.note-head {
+  font-size: 1.5em;
+  font-weight: bolder;
+  margin-bottom: 15px;
 }

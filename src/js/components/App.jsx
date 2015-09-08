@@ -14,8 +14,8 @@ export default React.createClass({
 
   getDefaultProps() {
     return {
+      title: '士林區德華里',
       stats: {
-        title: '士林區德華里',
         items: [{
           name: '測試1',
           val: 2
@@ -30,16 +30,23 @@ export default React.createClass({
       }, {
         agency: '社會局',
         val: '弱勢族群比較多'
+      }, {
+        agency: '社會局',
+        val: '弱勢族群比較多'
+      }, {
+        agency: '社會局',
+        val: '弱勢族群比較多'
       }]
     }
   },
 
   render() {
-    let {onAddTask, onClear, stats, notes} = this.props;
+    let {onAddTask, onClear, title, stats, notes} = this.props;
     return (
       <div className="container-fluid full-height">
         <div className="row full-height">
           <div className="col-sm-6 left-pane full-height">
+            <div className="left-top">{title}</div>
             <StatList stats={stats} />
             <NoteList notes={notes} />
           </div>

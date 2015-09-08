@@ -12,8 +12,7 @@ export default React.createClass({
     let {stats} = this.props;
 
     return (
-      <ListGroup className="col-no-margin left-top">
-        <h1>{stats.title}</h1>
+      <ListGroup className="stat-list">
         {stats.items.map(stat =>
           <div> {stat.name}: {stat.val} </div>
         )}
