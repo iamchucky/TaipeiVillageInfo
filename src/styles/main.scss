@@ -15,6 +15,7 @@ html, body, .full-height, .map {
 .left-pane {
   background-color: #e6e6e6;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 $general-padding: 15px;
@@ -46,14 +47,19 @@ $left-top-height: 60px;
   padding-top: $general-padding + $left-top-height;
   margin-top: -$left-top-height;
   overflow-y: auto;
+}
 
+.packed-layout {
+  position: relative;
+
+  .panel {
+    margin-bottom: 14px;
+  }
 }
 
 .note-panel {
-  width: 300px;
-  float: left;
-  margin-right: 10px;
-  margin-bottom: 10px;
+  position: absolute;
+  padding: 0px 7px;
 }
 
 .note-head {
