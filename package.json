@@ -43,6 +43,7 @@
     "object-assign": "^4.0.1",
     "react": "^0.13.3",
     "react-bootstrap": "^0.25.1",
+    "tabletop": "^1.4.2",
     "togeojson": "^0.13.0"
   }
 }
