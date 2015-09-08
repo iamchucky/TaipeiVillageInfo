@@ -23740,63 +23740,29 @@ var _NoteListJsx = require('./NoteList.jsx');
 
 var _NoteListJsx2 = _interopRequireDefault(_NoteListJsx);
 
-var _utils = require('../utils');
-
 exports['default'] = _react2['default'].createClass({
   displayName: 'App',
 
   propTypes: {
-    stats: _react.PropTypes.array.isRequired,
-    notes: _react.PropTypes.array.isRequired,
-    onAddTask: _react.PropTypes.func.isRequired,
-    onClear: _react.PropTypes.func.isRequired
+    onSelect: _react.PropTypes.func.isRequired
   },
 
   getDefaultProps: function getDefaultProps() {
+    return {};
+  },
+
+  getInitialState: function getInitialState() {
     return {
-      title: '士林區德華里',
-      stats: {
-        items: [{
-          name: '測試1',
-          val: 2
-        }, {
-          name: '測試2',
-          val: 3
-        }]
-      },
-      notes: [{
-        agency: '民政局',
-        val: '這個里的里民...'
-      }, {
-        agency: '社會局',
-        val: '弱勢族群比較多'
-      }, {
-        agency: '社會局',
-        val: '弱勢族群比較多'
-      }, {
-        agency: '社會局',
-        val: '弱勢族群比較多'
-      }]
+      title: '士林區三玉里'
     };
   },
 
-  componentDidMount: function componentDidMount() {
-    var self = this;
-    // get the google sheet info
-    var url = 'https://spreadsheets.google.com/feeds/list/1g9N5D2u69ctIu_2-G2U1FuGLHsFCCzm7c3zTNt9fb98/od6/private/full';
-    (0, _utils.ajax)('GET', url, function (xmlhttp) {
-      var xml = xmlhttp.responseXML;
-      console.log(xml);
-    });
+  handleMapDistrictSelect: function handleMapDistrictSelect(district) {
+    this.setState({ title: district });
   },
 
   render: function render() {
-    var _props = this.props;
-    var onAddTask = _props.onAddTask;
-    var onClear = _props.onClear;
-    var title = _props.title;
-    var stats = _props.stats;
-    var notes = _props.notes;
+    var title = this.state.title;
 
     return _react2['default'].createElement(
       'div',
@@ -23812,13 +23778,13 @@ exports['default'] = _react2['default'].createClass({
             { className: 'left-top' },
             title
           ),
-          _react2['default'].createElement(_StatListJsx2['default'], { stats: stats }),
-          _react2['default'].createElement(_NoteListJsx2['default'], { notes: notes })
+          _react2['default'].createElement(_StatListJsx2['default'], { district: title }),
+          _react2['default'].createElement(_NoteListJsx2['default'], { district: title })
         ),
         _react2['default'].createElement(
           'div',
           { className: 'col-sm-6 full-height' },
-          _react2['default'].createElement(_MapJsx2['default'], null)
+          _react2['default'].createElement(_MapJsx2['default'], { onSelect: this.handleMapDistrictSelect, district: title })
         )
       )
     );
@@ -23827,7 +23793,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../utils":246,"./Map.jsx":240,"./NoteList.jsx":241,"./StatList.jsx":242,"react":234,"react-bootstrap/lib/Button":8}],239:[function(require,module,exports){
+},{"./Map.jsx":240,"./NoteList.jsx":241,"./StatList.jsx":242,"react":234,"react-bootstrap/lib/Button":8}],239:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -23912,6 +23878,12 @@ var _utils = require('../utils');
 exports['default'] = _react2['default'].createClass({
   displayName: 'Map',
 
+  getDefaultProps: function getDefaultProps() {
+    return {
+      district: ''
+    };
+  },
+
   getInitialState: function getInitialState() {
     return {
       regionName: ''
@@ -23935,8 +23907,7 @@ exports['default'] = _react2['default'].createClass({
         clickedFeature = event.feature;
         map.data.overrideStyle(clickedFeature, { fillColor: 'red', strokeColor: 'red', strokeWeight: 3 });
 
-        //populateInfo(district);
-        //openInfoPane();
+        self.props.onSelect(district);
       });
 
       map.data.addListener('mouseover', function (event) {
@@ -23982,6 +23953,20 @@ exports['default'] = _react2['default'].createClass({
       // get the kml geometries
       (0, _utils.ajax)('GET', 'villages.kml', function (xmlhttp) {
         map.data.addGeoJson(toGeoJSON.kml(xmlhttp.responseXML));
+
+        map.data.forEach(function (feature) {
+          var district = feature.getProperty('name');
+          var belong = feature.getProperty('belong');
+          if (belong) {
+            district = belong + district;
+          }
+
+          if (district == self.props.district) {
+            clickedFeature = feature;
+          }
+        });
+
+        map.data.overrideStyle(clickedFeature, { fillColor: 'red', strokeColor: 'red', strokeWeight: 3 });
       });
 
       // get the village names
@@ -24028,17 +24013,64 @@ var _reactBootstrapLibPanel = require('react-bootstrap/lib/Panel');
 
 var _reactBootstrapLibPanel2 = _interopRequireDefault(_reactBootstrapLibPanel);
 
+var _utils = require('../utils');
+
 exports['default'] = _react2['default'].createClass({
   displayName: 'NoteList',
 
   getDefaultProps: function getDefaultProps() {
     return {
-      notes: []
+      district: ''
     };
   },
 
+  getInitialState: function getInitialState() {
+    return {
+      notes: {}
+    };
+  },
+
+  componentDidMount: function componentDidMount() {
+    var self = this;
+    // get the google sheet info
+
+    var url = 'https://spreadsheets.google.com/feeds/list/1g9N5D2u69ctIu_2-G2U1FuGLHsFCCzm7c3zTNt9fb98/ot44nmp/public/full';
+    (0, _utils.ajax)('GET', url, function (xmlhttp) {
+      var xml = xmlhttp.responseXML;
+      var entries = xml.getElementsByTagName('entry');
+      var data = {};
+      for (var e = 0; e < entries.length; ++e) {
+        var child = entries[e].children;
+        var title = entries[e].getElementsByTagName('title');
+        if (!title) continue;
+        title = title[0].textContent;
+        data[title] = [];
+        for (var c = 0; c < child.length; ++c) {
+          var ch = child[c];
+          var nodeName = ch.nodeName;
+          var filterOut = ['gsx:行政區', 'gsx:區', 'gsx:里'];
+          if (!nodeName.startsWith('gsx:') || filterOut.indexOf(nodeName) >= 0) continue;
+
+          var attr = ch.nodeName.replace('gsx:', '');
+          var val = ch.textContent;
+          data[title].push({ agency: attr, val: val });
+        }
+      }
+      self.setState({ notes: data });
+    });
+  },
+
   render: function render() {
-    var notes = this.props.notes;
+    var district = this.props.district;
+
+    var notes = this.state.notes[district];
+    if (!notes) {
+      return _react2['default'].createElement(
+        'div',
+        null,
+        '讀取中'
+      );
+    }
 
     return _react2['default'].createElement(
       _reactBootstrapLibListGroup2['default'],
@@ -24065,7 +24097,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"react":234,"react-bootstrap/lib/ListGroup":14,"react-bootstrap/lib/Panel":15}],242:[function(require,module,exports){
+},{"../utils":246,"react":234,"react-bootstrap/lib/ListGroup":14,"react-bootstrap/lib/Panel":15}],242:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -24082,22 +24114,65 @@ var _reactBootstrapLibListGroup = require('react-bootstrap/lib/ListGroup');
 
 var _reactBootstrapLibListGroup2 = _interopRequireDefault(_reactBootstrapLibListGroup);
 
+var _utils = require('../utils');
+
 exports['default'] = _react2['default'].createClass({
   displayName: 'StatList',
 
   getDefaultProps: function getDefaultProps() {
     return {
+      district: ''
+    };
+  },
+
+  getInitialState: function getInitialState() {
+    return {
       stats: {}
     };
   },
 
+  componentDidMount: function componentDidMount() {
+    var self = this;
+    // get the google sheet info
+
+    var url = 'https://spreadsheets.google.com/feeds/list/1g9N5D2u69ctIu_2-G2U1FuGLHsFCCzm7c3zTNt9fb98/od6/public/full';
+    (0, _utils.ajax)('GET', url, function (xmlhttp) {
+      var xml = xmlhttp.responseXML;
+      var entries = xml.getElementsByTagName('entry');
+      var data = {};
+      for (var e = 0; e < entries.length; ++e) {
+        var child = entries[e].children;
+        var title = entries[e].getElementsByTagName('title');
+        if (!title) continue;
+        title = title[0].textContent;
+        data[title] = [];
+        for (var c = 0; c < child.length; ++c) {
+          var ch = child[c];
+          var nodeName = ch.nodeName;
+          var filterOut = ['gsx:行政區', 'gsx:區', 'gsx:里'];
+          if (!nodeName.startsWith('gsx:') || filterOut.indexOf(nodeName) >= 0) continue;
+
+          var attr = ch.nodeName.replace('gsx:', '');
+          var val = ch.textContent;
+          data[title].push({ name: attr, val: val });
+        }
+      }
+      self.setState({ stats: data });
+    });
+  },
+
   render: function render() {
-    var stats = this.props.stats;
+    var district = this.props.district;
+
+    var stats = this.state.stats[district];
+    if (!stats) {
+      return _react2['default'].createElement('div', null);
+    }
 
     return _react2['default'].createElement(
       _reactBootstrapLibListGroup2['default'],
       { className: 'stat-list' },
-      stats.items.map(function (stat) {
+      stats.map(function (stat) {
         return _react2['default'].createElement(
           'div',
           null,
@@ -24114,7 +24189,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"react":234,"react-bootstrap/lib/ListGroup":14}],243:[function(require,module,exports){
+},{"../utils":246,"react":234,"react-bootstrap/lib/ListGroup":14}],243:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }

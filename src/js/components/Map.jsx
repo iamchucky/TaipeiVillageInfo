@@ -2,6 +2,12 @@ import React from 'react';
 import {ajax} from '../utils';
 
 export default React.createClass({
+  getDefaultProps() {
+    return {
+      district: ''
+    };
+  },
+
   getInitialState() {
     return {
       regionName: ''
@@ -25,8 +31,7 @@ export default React.createClass({
         clickedFeature = event.feature;
         map.data.overrideStyle(clickedFeature, { fillColor: 'red', strokeColor: 'red', strokeWeight: 3});
 
-        //populateInfo(district);
-        //openInfoPane();
+        self.props.onSelect(district);
       });
 
       map.data.addListener('mouseover', function(event) {
@@ -72,6 +77,20 @@ export default React.createClass({
       // get the kml geometries
       ajax('GET', 'villages.kml', function(xmlhttp) {
         map.data.addGeoJson(toGeoJSON.kml(xmlhttp.responseXML));
+
+        map.data.forEach((feature) => {
+          var district = feature.getProperty('name');
+          var belong = feature.getProperty('belong');
+          if (belong) {
+            district = belong + district;
+          }
+
+          if (district == self.props.district) {
+            clickedFeature = feature;
+          }
+        });
+
+        map.data.overrideStyle(clickedFeature, { fillColor: 'red', strokeColor: 'red', strokeWeight: 3});
       });
       
       // get the village names
