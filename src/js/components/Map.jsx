@@ -14,9 +14,6 @@ export default React.createClass({
     var map;
     var clickedFeature;
 
-    // To get data from google sheets:
-    // https://spreadsheets.google.com/feeds/list/1g9N5D2u69ctIu_2-G2U1FuGLHsFCCzm7c3zTNt9fb98/od6/private/full
-
     function registerListeners() {
       map.data.addListener('click', function(event) {
         var district = event.feature.getProperty('name');

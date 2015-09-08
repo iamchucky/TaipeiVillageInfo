@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/lib/Button';
 import Map from './Map.jsx';
 import StatList from './StatList.jsx';
 import NoteList from './NoteList.jsx';
+import {ajax} from '../utils';
 
 export default React.createClass({
   propTypes: {
@@ -38,6 +39,17 @@ export default React.createClass({
         val: '弱勢族群比較多'
       }]
     }
+  },
+
+  componentDidMount() {
+    var self = this;
+    // get the google sheet info
+    var url = 'https://spreadsheets.google.com/feeds/list/1g9N5D2u69ctIu_2-G2U1FuGLHsFCCzm7c3zTNt9fb98/od6/private/full'
+    ajax('GET', url, function(xmlhttp) {
+      var xml = xmlhttp.responseXML;
+      console.log(xml);
+
+    });
   },
 
   render() {

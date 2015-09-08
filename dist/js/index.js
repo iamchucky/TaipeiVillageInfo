@@ -23740,6 +23740,8 @@ var _NoteListJsx = require('./NoteList.jsx');
 
 var _NoteListJsx2 = _interopRequireDefault(_NoteListJsx);
 
+var _utils = require('../utils');
+
 exports['default'] = _react2['default'].createClass({
   displayName: 'App',
 
@@ -23776,6 +23778,16 @@ exports['default'] = _react2['default'].createClass({
         val: '弱勢族群比較多'
       }]
     };
+  },
+
+  componentDidMount: function componentDidMount() {
+    var self = this;
+    // get the google sheet info
+    var url = 'https://spreadsheets.google.com/feeds/list/1g9N5D2u69ctIu_2-G2U1FuGLHsFCCzm7c3zTNt9fb98/od6/private/full';
+    (0, _utils.ajax)('GET', url, function (xmlhttp) {
+      var xml = xmlhttp.responseXML;
+      console.log(xml);
+    });
   },
 
   render: function render() {
@@ -23815,7 +23827,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./Map.jsx":240,"./NoteList.jsx":241,"./StatList.jsx":242,"react":234,"react-bootstrap/lib/Button":8}],239:[function(require,module,exports){
+},{"../utils":246,"./Map.jsx":240,"./NoteList.jsx":241,"./StatList.jsx":242,"react":234,"react-bootstrap/lib/Button":8}],239:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -23911,9 +23923,6 @@ exports['default'] = _react2['default'].createClass({
     var mapElement = this.refs.map.getDOMNode();
     var map;
     var clickedFeature;
-
-    // To get data from google sheets:
-    // https://spreadsheets.google.com/feeds/list/1g9N5D2u69ctIu_2-G2U1FuGLHsFCCzm7c3zTNt9fb98/od6/private/full
 
     function registerListeners() {
       map.data.addListener('click', function (event) {
