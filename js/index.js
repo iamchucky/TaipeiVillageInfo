@@ -24248,10 +24248,17 @@ exports['default'] = _react2['default'].createClass({
     };
   },
 
+  getInitialState: function getInitialState() {
+    return {
+      selectedStat: ''
+    };
+  },
+
   handleStatOnClick: function handleStatOnClick(name) {
     var self = this;
     return function (e) {
       self.props.onStatClick(name);
+      self.setState({ selectedStat: name });
     };
   },
 
@@ -24261,6 +24268,7 @@ exports['default'] = _react2['default'].createClass({
     var _props = this.props;
     var district = _props.district;
     var stats = _props.stats;
+    var selectedStat = this.state.selectedStat;
 
     stats = stats[district];
     if (!stats) {
@@ -24276,7 +24284,7 @@ exports['default'] = _react2['default'].createClass({
           { key: statName },
           _react2['default'].createElement(
             'span',
-            { onClick: _this.handleStatOnClick(statName) },
+            { className: selectedStat == statName ? 'selected stat-name' : 'stat-name', onClick: _this.handleStatOnClick(statName) },
             statName
           ),
           ': ',
