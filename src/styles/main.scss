@@ -49,6 +49,16 @@ $left-top-height: 60px;
   overflow-y: auto;
 }
 
+.stat-list {
+  .stat-name {
+    cursor: pointer;
+  }
+
+  .selected {
+    color: red;
+  }
+}
+
 .note-list {
   .note-panel {
   }

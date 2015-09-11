@@ -8,16 +8,24 @@ export default React.createClass({
       stats: {}
     };
   },
+  
+  getInitialState() {
+    return {
+      selectedStat: ''
+    };
+  },
 
   handleStatOnClick(name) {
     var self = this;
     return (e) => {
       self.props.onStatClick(name);
+      self.setState({ selectedStat: name });
     };
   },
 
   render() {
     let {district, stats} = this.props;
+    let {selectedStat} = this.state;
     stats = stats[district];
     if (!stats) {
       return (
@@ -28,7 +36,7 @@ export default React.createClass({
     return (
       <ListGroup className="stat-list">
         {Object.keys(stats).map(statName =>
-          <div key={statName}><span onClick={this.handleStatOnClick(statName)}>{statName}</span>: {stats[statName]} </div>
+          <div key={statName}><span className={selectedStat == statName ? 'selected stat-name': 'stat-name'} onClick={this.handleStatOnClick(statName)}>{statName}</span>: {stats[statName]} </div>
         )}
       </ListGroup>
     );
