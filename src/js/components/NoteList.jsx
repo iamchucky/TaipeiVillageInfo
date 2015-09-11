@@ -1,6 +1,6 @@
 import React from 'react';
 import Panel from 'react-bootstrap/lib/Panel';
-import PackLayout from 'react-layout-pack';
+import ListGroup from 'react-bootstrap/lib/ListGroup';
 
 export default React.createClass({
   getDefaultProps() {
@@ -8,12 +8,6 @@ export default React.createClass({
       district: '',
       notes: {}
     };
-  },
-
-  componentDidUpdate() {
-    if (this.refs.pack) {
-      this.refs.pack.reposition();
-    }
   },
 
   render() {
@@ -27,16 +21,16 @@ export default React.createClass({
 
 
     return (
-      <PackLayout className="packed-layout" ref="pack" tag="div" itemMargin={0}>
+      <ListGroup className="note-list">
         {notes.map(note =>
-          <div className="note-panel col-xs-12 col-sm-6 col-lg-4" key={note.agency}>
+          <div className="note-panel" key={note.agency}>
             <Panel> 
               <div className="note-head">{note.agency}</div>
               <div className="note-body">{note.val}</div>
             </Panel>
           </div>
         )}
-      </PackLayout>
+      </ListGroup>
     );
   }
 });

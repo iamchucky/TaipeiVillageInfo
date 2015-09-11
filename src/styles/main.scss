@@ -49,17 +49,9 @@ $left-top-height: 60px;
   overflow-y: auto;
 }
 
-.packed-layout {
-  position: relative;
-
-  .panel {
-    margin-bottom: 14px;
+.note-list {
+  .note-panel {
   }
-}
-
-.note-panel {
-  position: absolute;
-  padding: 0px 7px;
 }
 
 .note-head {

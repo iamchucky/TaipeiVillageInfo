@@ -1,6 +1,8 @@
 import React from 'react';
 import {ajax} from '../utils';
 
+var map;
+
 export default React.createClass({
   getDefaultProps() {
     return {
@@ -17,7 +19,6 @@ export default React.createClass({
   componentDidMount() {
     var self = this;
     var mapElement = this.refs.map.getDOMNode();
-    var map;
     var clickedFeature;
 
     function registerListeners() {
@@ -58,7 +59,7 @@ export default React.createClass({
       });
     };
 
-    google.maps.event.addDomListener(window, 'load', () => {
+    window.initMap = function() {
       map = new google.maps.Map(mapElement, {
         zoom: 12,
         center: { lat: 25.08, lng: 121.55 },
@@ -96,8 +97,27 @@ export default React.createClass({
       // get the village names
 
       registerListeners();
-    });
+    };
 
+  },
+
+  showDataWithOpacity(statName) {
+    var norm = this.props.statNorm;
+    var stats = this.props.stats;
+    map.data.setStyle(function(feature) {
+      var color = 'red';
+      var name = feature.getProperty('name');
+      var belong = feature.getProperty('belong');
+      name = belong+name;
+      var out = {
+        fillColor: color,
+        strokeColor: color,
+        strokeWeight: 1
+      }
+      var val = parseFloat(stats[name][statName]);
+      out.fillOpacity = (val - norm[statName].min) * norm[statName].scale;
+      return out;
+    })
   },
 
   render() {
