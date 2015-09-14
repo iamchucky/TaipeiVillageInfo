@@ -102,8 +102,9 @@ export default React.createClass({
   },
 
   showDataWithOpacity(statName) {
-    var norm = this.props.statNorm;
-    var stats = this.props.stats;
+    //var norm = this.props.statNorm;
+    //var stats = this.props.stats;
+    var colorStats = this.props.colorStats;
     map.data.setStyle(function(feature) {
       var color = 'red';
       var name = feature.getProperty('name');
@@ -114,8 +115,11 @@ export default React.createClass({
         strokeColor: color,
         strokeWeight: 1
       }
+      /*
       var val = parseFloat(stats[name][statName]);
       out.fillOpacity = (val - norm[statName].min) * norm[statName].scale;
+      */
+      out.fillOpacity = colorStats[name][statName];
       return out;
     })
   },

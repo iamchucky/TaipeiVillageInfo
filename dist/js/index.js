@@ -2818,9 +2818,10 @@ module.exports = function(it){
 var toObject = require('./$.to-object')
   , IObject  = require('./$.iobject')
   , enumKeys = require('./$.enum-keys');
-/* eslint-disable no-unused-vars */
-module.exports = Object.assign || function assign(target, source){
-/* eslint-enable no-unused-vars */
+
+module.exports = require('./$.fails')(function(){
+  return Symbol() in Object.assign({}); // Object.assign available and Symbol is native
+}) ? function assign(target, source){   // eslint-disable-line no-unused-vars
   var T = toObject(target)
     , l = arguments.length
     , i = 1;
@@ -2833,8 +2834,8 @@ module.exports = Object.assign || function assign(target, source){
     while(length > j)T[key = keys[j++]] = S[key];
   }
   return T;
-};
-},{"./$.enum-keys":45,"./$.iobject":48,"./$.to-object":53}],40:[function(require,module,exports){
+} : Object.assign;
+},{"./$.enum-keys":45,"./$.fails":46,"./$.iobject":48,"./$.to-object":53}],40:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = function(it){
@@ -3016,7 +3017,8 @@ module.exports = function(it){
 },{"./$.defined":44}],54:[function(require,module,exports){
 // 19.1.3.1 Object.assign(target, source)
 var $def = require('./$.def');
-$def($def.S, 'Object', {assign: require('./$.assign')});
+
+$def($def.S + $def.F, 'Object', {assign: require('./$.assign')});
 },{"./$.assign":39,"./$.def":43}],55:[function(require,module,exports){
 // 19.1.2.14 Object.keys(O)
 var toObject = require('./$.to-object');
@@ -23738,6 +23740,8 @@ var _NoteListJsx = require('./NoteList.jsx');
 
 var _NoteListJsx2 = _interopRequireDefault(_NoteListJsx);
 
+var colorDivision = 10;
+
 function getStatNorm(data) {
   // find max and min of the values
   var min = [];
@@ -23780,6 +23784,55 @@ function getStatNorm(data) {
   return out;
 }
 
+function getColorStats(data) {
+  var bins = [];
+  // figure out the score bin
+  for (var i = 0; i < colorDivision; ++i) {
+    var opacity = 0.9 / colorDivision * i;
+    bins.push(opacity);
+  }
+
+  // get attributes
+  var attrs = [];
+  for (var _district in data) {
+    var districtStats = data[_district];
+    for (var attr in districtStats) {
+      attrs.push(attr);
+    }
+    break;
+  }
+
+  // get the binned color opacity
+  var colorStats = {};
+  for (var i = 0; i < attrs.length; ++i) {
+    var stats = [];
+    for (var _district2 in data) {
+      var districtStats = data[_district2];
+      var _val = parseFloat(districtStats[attrs[i]]);
+      stats.push({ district: _district2, val: _val });
+    }
+
+    stats.sort(function (a, b) {
+      return a.val - b.val;
+    });
+
+    for (var j = 0; j < stats.length; ++j) {
+      var _stats$j = stats[j];
+      var district = _stats$j.district;
+      var val = _stats$j.val;
+
+      if (!colorStats[district]) {
+        colorStats[district] = {};
+      }
+      // bin the stats
+      var binIndex = Math.floor(j / stats.length * colorDivision);
+
+      colorStats[district][attrs[i]] = bins[binIndex];
+    }
+  }
+  return colorStats;
+}
+
 exports['default'] = _react2['default'].createClass({
   displayName: 'App',
 
@@ -23792,7 +23845,8 @@ exports['default'] = _react2['default'].createClass({
       title: '士林區三玉里',
       stats: {},
       notes: {},
-      statNorm: {}
+      statNorm: {},
+      colorStats: {}
     };
   },
 
@@ -23848,6 +23902,7 @@ exports['default'] = _react2['default'].createClass({
         }
 
         newState.statNorm = getStatNorm(newState.stats);
+        newState.colorStats = getColorStats(newState.stats);
 
         // for notes
         var notesObj = data['各局筆記'];
@@ -23898,6 +23953,7 @@ exports['default'] = _react2['default'].createClass({
     var notes = _state.notes;
     var stats = _state.stats;
     var statNorm = _state.statNorm;
+    var colorStats = _state.colorStats;
 
     return _react2['default'].createElement(
       'div',
@@ -23919,7 +23975,7 @@ exports['default'] = _react2['default'].createClass({
         _react2['default'].createElement(
           'div',
           { className: 'col-sm-9 full-height' },
-          _react2['default'].createElement(_MapJsx2['default'], { ref: 'map', onSelect: this.handleMapDistrictSelect, district: title, stats: stats, statNorm: statNorm })
+          _react2['default'].createElement(_MapJsx2['default'], { ref: 'map', onSelect: this.handleMapDistrictSelect, district: title, stats: stats, statNorm: statNorm, colorStats: colorStats })
         )
       )
     );
@@ -24112,8 +24168,9 @@ exports['default'] = _react2['default'].createClass({
   },
 
   showDataWithOpacity: function showDataWithOpacity(statName) {
-    var norm = this.props.statNorm;
-    var stats = this.props.stats;
+    //var norm = this.props.statNorm;
+    //var stats = this.props.stats;
+    var colorStats = this.props.colorStats;
     map.data.setStyle(function (feature) {
       var color = 'red';
       var name = feature.getProperty('name');
@@ -24124,8 +24181,11 @@ exports['default'] = _react2['default'].createClass({
         strokeColor: color,
         strokeWeight: 1
       };
+      /*
       var val = parseFloat(stats[name][statName]);
       out.fillOpacity = (val - norm[statName].min) * norm[statName].scale;
+      */
+      out.fillOpacity = colorStats[name][statName];
       return out;
     });
   },

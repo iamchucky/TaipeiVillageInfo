@@ -4,6 +4,8 @@ import Map from './Map.jsx';
 import StatList from './StatList.jsx';
 import NoteList from './NoteList.jsx';
 
+var colorDivision = 10;
+
 function getStatNorm(data) {
   // find max and min of the values
   var min = [];
@@ -46,6 +48,52 @@ function getStatNorm(data) {
   return out;
 }
 
+function getColorStats(data) {
+  var bins = [];
+  // figure out the score bin
+  for (var i = 0; i < colorDivision; ++i) {
+    var opacity = 0.8 / colorDivision * i;
+    bins.push(opacity);
+  }
+
+  // get attributes
+  var attrs = [];
+  for (let district in data) {
+    var districtStats = data[district];
+    for (let attr in districtStats) {
+      attrs.push(attr);
+    }
+    break;
+  }
+
+  // get the binned color opacity
+  var colorStats = {};
+  for (var i = 0; i < attrs.length; ++i) {
+    var stats = [];
+    for (let district in data) {
+      var districtStats = data[district];
+      let val = parseFloat(districtStats[attrs[i]]);
+      stats.push({ district, val });
+    }
+
+    stats.sort(function(a, b) {
+      return a.val - b.val;
+    });
+
+    for (var j = 0; j < stats.length; ++j) {
+      var {district, val} = stats[j];
+      if (!colorStats[district]) {
+        colorStats[district] = {};
+      }
+      // bin the stats
+      var binIndex = Math.floor(j / stats.length * colorDivision);
+
+      colorStats[district][attrs[i]] = bins[binIndex];
+    }
+  }
+  return colorStats;
+}
+
 export default React.createClass({
   getDefaultProps() {
     return {}
@@ -56,7 +104,8 @@ export default React.createClass({
       title: '士林區三玉里',
       stats: {},
       notes: {},
-      statNorm: {}
+      statNorm: {},
+      colorStats: {}
     }
   },
   
@@ -91,6 +140,7 @@ export default React.createClass({
 
         // for districtColors
         newState.statNorm = getStatNorm(newState.stats);
+        newState.colorStats = getColorStats(newState.stats);
 
         // for notes
         let notesObj = data['各局筆記'];
@@ -115,7 +165,7 @@ export default React.createClass({
   },
 
   render() {
-    let {title, notes, stats, statNorm} = this.state;
+    let {title, notes, stats, statNorm, colorStats} = this.state;
     return (
       <div className="container-fluid full-height">
         <div className="row full-height">
@@ -125,7 +175,7 @@ export default React.createClass({
             <NoteList district={title} notes={notes} />
           </div>
           <div className="col-sm-9 full-height">
-            <Map ref="map" onSelect={this.handleMapDistrictSelect} district={title} stats={stats} statNorm={statNorm} />
+            <Map ref="map" onSelect={this.handleMapDistrictSelect} district={title} stats={stats} statNorm={statNorm} colorStats={colorStats} />
           </div>
         </div>
       </div>
